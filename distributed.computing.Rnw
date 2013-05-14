@@ -1,0 +1,95 @@
+\documentclass[10pt,final]{beamer}
+\mode<presentation>
+\usetheme{debian}
+
+\ifdefined\knitrout
+  \renewenvironment{knitrout}{\begin{footnotesize}}{\end{footnotesize}}
+\else
+\fi
+\usepackage{ulem}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{verbatim}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{caption}
+
+\lstloadlanguages{R}
+\lstdefinelanguage{Renhanced}[]{R}{%
+  morekeywords={acf,ar,arima,arima.sim,colMeans,colSums,is.na,is.null,
+    mapply,ms,na.rm,nlmin,replicate,row.names,rowMeans,rowSums,seasonal,
+    sys.time,system.time,ts.plot,which.max,which.min},
+  deletekeywords={Call},
+  alsoletter={.\%},
+  alsoother={:_\$}}
+\lstset{language=Renhanced,
+  extendedchars=false,
+  basicstyle=\small\ttfamily,
+  commentstyle=\textsl,
+  showstringspaces=false,
+  index=[1][keywords]}
+
+
+\hypersetup{pdftitle={Distributed Computing Tutorial},bookmarks}
+\title{Distributed Computing Patterns in R}
+\date{May 17, 2013}
+
+%%\author[Bryan Lewis]{Bryan W. Lewis \inst{1} \and Whit Armstrong \inst{2}}
+\author{Bryan W. Lewis \inst{1} \and Whit Armstrong \inst{2}}
+
+%% \author[1]{  Bryan W. Lewis\\{\small\texttt{blewis@illposed.net}} }
+%% \author[2]{  Whit Armstrong\\{\small\texttt{armstrong.whit@gmail.com}} }
+
+\institute{\inst{1} Paradigm4 \and %
+                      \inst{2} KLS Diversified Asset Management}
+
+%% \institute[Paradigm4]{Paradigm4}
+%% \institute[KLS]{KLS Diversified Asset Management}
+
+<<setup, include=FALSE>>=
+opts_chunk$set(size = 'footnotesize')
+@ 
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}[fragile]{Messaging patterns}
+  \begin{itemize}
+    \item Messaging patterns are ways of combining sockets to communicate effectively
+    \item In a messaging pattern each socket has a defined role and fulfills the responsibilities of that role
+    \item ZMQ offers several built-in messaging patterns which make it easy to rapidly design a distributed application:
+      \begin{itemize}
+      \item Request-reply, which connects a set of clients to a set of services.
+      \item Pub-sub, which connects a set of publishers to a set of subscribers.
+      \item Pipeline, which connects nodes in a fan-out/fan-in pattern that can have multiple steps and loops.
+      \item Exclusive pair, which connects two sockets exclusively.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Request / Reply, Server}
+  \lstinputlisting[language=R]{code/hello.server.R}
+\end{frame}
+
+\begin{frame}[fragile]{Request / Reply, Server2}
+  \verbatiminput{code/hello.server.R}
+\end{frame}
+
+
+
+
+\begin{frame}{Thanks!}
+    Many people contributed ideas and helped debug work in progress as the package was being developed.\\
+    \medskip
+    Kurt Hornik for putting up with my packaging.\\
+    John Laing for initial debugging.\\
+    Gyan Sinha for ideas and initial testing.\\
+    Prof Brian Ripley for just being himself.\\
+    My wife for enduring many solitary hours while I built these packages.\\
+\end{frame}
+
+\end{document}
