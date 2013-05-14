@@ -30,6 +30,10 @@
   basicstyle=\small\ttfamily,
   commentstyle=\textsl,
   showstringspaces=false,
+  %stringstyle=\color{red},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=3pt,
   index=[1][keywords]}
 
 
@@ -72,7 +76,7 @@ opts_chunk$set(size = 'footnotesize')
 \end{frame}
 
 \begin{frame}[fragile]{Request / Reply, Server}
-  \lstinputlisting[language=R]{code/hello.server.R}
+  \lstinputlisting[language=Renhanced]{code/hello.server.R}
 \end{frame}
 
 \begin{frame}[fragile]{Request / Reply, Server2}
