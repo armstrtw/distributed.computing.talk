@@ -15,30 +15,7 @@
 \usepackage{verbatim}
 \usepackage{color}
 \usepackage{xcolor}
-\usepackage{listings}
 \usepackage{caption}
-
-\lstloadlanguages{R}
-\lstdefinelanguage{Renhanced}[]{R}{
-  morekeywords={acf,ar,arima,arima.sim,colMeans,colSums,is.na,is.null,
-    mapply,ms,na.rm,nlmin,replicate,row.names,rowMeans,rowSums,seasonal,
-    sys.time,system.time,ts.plot,which.max,which.min},
-  deletekeywords={Call,socket},
-  alsoletter={.\%},
-  alsoother={:_\$}}
-\lstset{language=Renhanced,
-  extendedchars=false,
-  %basicstyle=\small\ttfamily,
-  basicstyle=\ttfamily\scriptsize,
-  commentstyle=\textsl,
-  showstringspaces=false,
-  %stringstyle=\color{red},
-  %keywordstyle=\color{blue},
-  numbers=left,
-  numberstyle=\tiny\color{gray},
-  numbersep=3pt,
-  breaklines=true,
-  index=[1][keywords]}
 
 
 \hypersetup{pdftitle={Distributed Computing Tutorial},bookmarks}
@@ -58,8 +35,8 @@ opts_chunk$set(size = 'footnotesize')
 
 \begin{frame}[fragile]{Messaging patterns}
   \begin{itemize}
-    \item Messaging patterns are ways of combining sockets to communicate effectively
-    \item In a messaging pattern each socket has a defined role and fulfills the responsibilities of that role
+    \item Messaging patterns are ways of combining sockets to communicate effectively.
+    \item In a messaging pattern each socket has a defined role and fulfills the responsibilities of that role.
     \item ZMQ offers several built-in messaging patterns which make it easy to rapidly design a distributed application:
       \begin{itemize}
       \item Request-reply, which connects a set of clients to a set of services.
@@ -72,9 +49,9 @@ opts_chunk$set(size = 'footnotesize')
 
 \begin{frame}[fragile]{What does ZMQ give us?}
   \begin{itemize}
-  \item ZMQ is like a highly specialized networking toolkit.
+  \item ZMQ is a highly specialized networking toolkit.
   \item It implements the basics of socket communications while letting the user focus on the application.
-  \item Very complex messaging patterns can be built on top of these simple ZMQ sockets.
+  \item Very complex messaging patterns can be built on top of these simple ZMQ sockets (Paranoid Pirate, Majordomo, Binary Star, Suicidal Snail, etc.).
   \item I highly recommend reading ``The Guide'' before writing your own apps.
   \item \url{http://zguide.zeromq.org/page:all} 
   \end{itemize}
@@ -105,7 +82,7 @@ while (1) {
 \end{frame}
 
 \begin{frame}[fragile,shrink]{Request / Reply, Client}
-<<main-stats-table,echo=TRUE>>=
+<<echo=TRUE>>=
 require(rzmq,quietly=TRUE)
 
 ctx <- init.context()
@@ -124,6 +101,74 @@ for(request.number in 1:5) {
 @ 
 
 \end{frame}
+
+\begin{frame}[fragile]{Request / Reply server as remote procedure call}
+<<eval=FALSE,echo=TRUE>>=
+require(rzmq)
+
+ctx <- init.context()
+responder <- init.socket(ctx,"ZMQ_REP")
+bind.socket(responder, "tcp://*:5557")
+
+while (1) {
+    req <- receive.socket(responder)
+    send.socket(responder, req * req)
+}
+@ 
+\end{frame}
+
+
+\begin{frame}[fragile]{Request / Reply client as remote procedure call}
+<<echo=TRUE>>=
+require(rzmq,quietly=TRUE)
+
+ctx <- init.context()
+requester <-  init.socket(ctx,"ZMQ_REQ")
+connect.socket(requester, "tcp://localhost:5557")
+
+x <- 10
+send.socket(requester, x)
+reply <- receive.socket(requester)
+all.equal(x*x,reply)
+print(reply)
+@ 
+\end{frame}
+
+\begin{frame}[fragile]{Request / Reply client -- rpc server with user function}
+<<eval=FALSE,echo=TRUE>>=
+require(rzmq)
+
+ctx <- init.context()
+responder <- init.socket(ctx,"ZMQ_REP")
+bind.socket(responder, "tcp://*:5558")
+
+while (1) {
+    msg <- receive.socket(responder)
+    fun <- msg$fun
+    args <- msg$args
+    result <- do.call(fun,args)
+    send.socket(responder, result)
+}
+@ 
+\end{frame}
+
+
+\begin{frame}[fragile]{Request / Reply client -- rpc client with user function}
+<<echo=TRUE>>=
+require(rzmq,quietly=TRUE)
+
+ctx <- init.context()
+requester <-  init.socket(ctx,"ZMQ_REQ")
+connect.socket(requester, "tcp://localhost:5558")
+
+foo <- function(x) { x * pi }
+req <- list(fun=foo,args=list(x=100))
+send.socket(requester, req)
+reply <- receive.socket(requester)
+print(reply)
+@ 
+\end{frame}
+
 
 \begin{frame}[fragile]{Pub / Sub example}
   \begin{itemize}
@@ -262,6 +307,7 @@ print(mean(unlist(z)))
     Many people contributed ideas and helped debug work in progress as the rzmq package was being developed.\\
     \medskip
     Bryan Lewis for collaborating and planning this talk with me.\\
+    JD Long for my excessive reuse of the estimatePi example.\\
     Kurt Hornik for putting up with my packaging.\\
     John Laing for finding bugs in my code.\\
     Prof Brian Ripley for just being himself.\\
