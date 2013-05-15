@@ -89,11 +89,40 @@ opts_chunk$set(size = 'footnotesize')
 \end{frame}
 
 \begin{frame}[fragile]{Request / Reply, Server}
-  \lstinputlisting[language=Renhanced]{code/hello.server.R}
+<<eval=FALSE,echo=TRUE>>=
+require(rzmq)
+
+ctx <- init.context()
+responder <- init.socket(ctx,"ZMQ_REP")
+bind.socket(responder, "tcp://*:5555")
+
+while (1) {
+    req <- receive.socket(responder)
+    send.socket(responder, "World")
+}
+
+@ 
 \end{frame}
 
-\begin{frame}[fragile]{Request / Reply, Client}
-  \lstinputlisting[language=Renhanced]{code/hello.client.R}
+\begin{frame}[fragile,shrink]{Request / Reply, Client}
+<<main-stats-table,echo=TRUE>>=
+require(rzmq,quietly=TRUE)
+
+ctx <- init.context()
+
+requester <-  init.socket(ctx,"ZMQ_REQ")
+
+connect.socket(requester, "tcp://localhost:5555")
+
+for(request.number in 1:5) {
+    print(paste("Sending Hello", request.number))
+    send.socket(requester, "Hello")
+    reply <- receive.socket(requester)
+    print(paste("Received:",reply,"number",request.number))
+}
+
+@ 
+
 \end{frame}
 
 \begin{frame}[fragile]{Pub / Sub example}
@@ -103,24 +132,130 @@ opts_chunk$set(size = 'footnotesize')
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Pub / Sub, Server}
-  \lstinputlisting[language=Renhanced]{code/swap.publisher.R}
+\begin{frame}[fragile,shrink]{Pub / Sub, Server}
+<<eval=FALSE,echo=TRUE>>=
+require(rzmq)
+
+context = init.context()
+pub.socket = init.socket(context,"ZMQ_PUB")
+bind.socket(pub.socket,"tcp://*:5556")
+
+node.names <- c("2yr","5yr","10yr")
+usd.base.curve <- structure(rep(2,length(node.names)),names=node.names)
+eur.base.curve <- structure(rep(1,length(node.names)),names=node.names)
+
+while(1) {
+    ## updates to USD swaps
+    new.usd.curve <- usd.base.curve + rnorm(length(usd.base.curve))/100
+    send.raw.string(pub.socket,"USD-SWAPS",send.more=TRUE)
+    send.socket(pub.socket,new.usd.curve)
+
+    ## updates to EUR swaps
+    new.eur.curve <- eur.base.curve + rnorm(length(eur.base.curve))/100
+    send.raw.string(pub.socket,"EUR-SWAPS",send.more=TRUE)
+    send.socket(pub.socket,new.eur.curve)
+}
+
+@ 
 \end{frame}
 
-\begin{frame}[fragile]{Pub / Sub, USD Client}
-  \lstinputlisting[language=Renhanced]{code/swap.subscriber.usd.R}
+\begin{frame}[fragile,shrink]{Pub / Sub, USD Client}
+<<echo=TRUE>>=
+require(rzmq,quietly=TRUE)
+
+context = init.context()
+subscriber = init.socket(context,"ZMQ_SUB")
+
+connect.socket(subscriber,"tcp://localhost:5556")
+topic <- "USD-SWAPS"
+subscribe(subscriber,topic)
+
+i <- 0
+while(i < 5) {
+    ## throw away the topic msg
+    res.topic <- receive.string(subscriber)
+    if(get.rcvmore(subscriber)) {
+        res <- receive.socket(subscriber)
+        print(res)
+    }
+    i <- i + 1
+}
+
+@ 
+
 \end{frame}
 
-\begin{frame}[fragile]{Pub / Sub, EUR Client}
-  \lstinputlisting[language=Renhanced]{code/swap.subscriber.eur.R}
+\begin{frame}[fragile,shrink]{Pub / Sub, EUR Client}
+<<echo=TRUE>>=
+require(rzmq,quietly=TRUE)
+
+context = init.context()
+subscriber = init.socket(context,"ZMQ_SUB")
+
+connect.socket(subscriber,"tcp://localhost:5556")
+topic <- "EUR-SWAPS"
+subscribe(subscriber,topic)
+i <- 0
+while(i < 5) {
+    ## throw away the topic msg
+    res.topic <- receive.string(subscriber)
+    if(get.rcvmore(subscriber)) {
+        res <- receive.socket(subscriber)
+        print(res)
+    }
+    i <- i + 1
+}
+
+@ 
 \end{frame}
 
-\begin{frame}[fragile]{Obligatory  deathstar example}
-  \lstinputlisting[language=Renhanced]{code/deathstar.example.r}
+\begin{frame}[fragile,shrink]{Obligatory  deathstar example}
+<<eval=FALSE,echo=TRUE>>=
+require(deathstar,quietly=TRUE)
+
+estimatePi <- function(seed) {
+    set.seed(seed)
+    numDraws <- 1e5
+    r <- .5
+    x <- runif(numDraws, min=-r, max=r)
+    y <- runif(numDraws, min=-r, max=r)
+    inCircle <- ifelse( (x^2 + y^2)^.5 < r , 1, 0)
+    sum(inCircle) / length(inCircle) * 4
+}
+
+cluster <- c("localhost")
+run.time <-
+    system.time(ans <-
+                zmq.cluster.lapply(cluster=cluster,
+                                   as.list(1:1e3),
+                                   estimatePi))
+
+print(mean(unlist(ans)))
+print(run.time)
+print(attr(ans,"execution.report"))
+
+@
 \end{frame}
 
-\begin{frame}[fragile]{doDeathstar foreach example}
-  \lstinputlisting[language=Renhanced]{code/doDeathstar.example.r}
+\begin{frame}[fragile,shrink]{doDeathstar foreach example}
+<<eval=FALSE,echo=TRUE>>=
+require(doDeathstar,quietly=TRUE)
+registerDoDeathstar("localhost")
+
+z <- foreach(i=1:100) %dopar% {
+    set.seed(i)
+    numDraws <- 1e4
+    r <- .5
+    x <- runif(numDraws, min=-r, max=r)
+    y <- runif(numDraws, min=-r, max=r)
+    inCircle <- ifelse( (x^2 + y^2)^.5 < r , 1, 0)
+    sum(inCircle) / length(inCircle) * 4
+}
+
+
+
+@ 
+
 \end{frame}
 
 

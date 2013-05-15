@@ -4,7 +4,7 @@ library(rzmq)
 
 context = init.context()
 pub.socket = init.socket(context,"ZMQ_PUB")
-bind.socket(pub.socket,"tcp://*:5555")
+bind.socket(pub.socket,"tcp://*:5556")
 
 node.names <- c("2yr","5yr","10yr")
 usd.base.curve <- structure(rep(2,length(node.names)),names=node.names)
