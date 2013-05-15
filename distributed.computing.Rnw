@@ -210,12 +210,12 @@ while(i < 5) {
 \end{frame}
 
 \begin{frame}[fragile,shrink]{Obligatory  deathstar example}
-<<eval=FALSE,echo=TRUE>>=
+<<eval=TRUE,echo=TRUE>>=
 require(deathstar,quietly=TRUE)
 
 estimatePi <- function(seed) {
     set.seed(seed)
-    numDraws <- 1e5
+    numDraws <- 1e4
     r <- .5
     x <- runif(numDraws, min=-r, max=r)
     y <- runif(numDraws, min=-r, max=r)
@@ -238,7 +238,7 @@ print(attr(ans,"execution.report"))
 \end{frame}
 
 \begin{frame}[fragile,shrink]{doDeathstar foreach example}
-<<eval=FALSE,echo=TRUE>>=
+<<eval=TRUE,echo=TRUE>>=
 require(doDeathstar,quietly=TRUE)
 registerDoDeathstar("localhost")
 
@@ -252,8 +252,7 @@ z <- foreach(i=1:100) %dopar% {
     sum(inCircle) / length(inCircle) * 4
 }
 
-
-
+print(mean(unlist(z)))
 @ 
 
 \end{frame}
