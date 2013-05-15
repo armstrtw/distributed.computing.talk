@@ -45,7 +45,6 @@
 \title{Distributed Computing Patterns in R}
 \date{May 17, 2013}
 
-%\author[]{Lucas Nussbaum\\{\small\texttt{lucas@debian.org}}}
 \author[]{Whit Armstrong\\{\small\texttt{armstrong.whit@gmail.com}}}
 \institute{KLS Diversified Asset Management}
 
@@ -75,7 +74,7 @@ opts_chunk$set(size = 'footnotesize')
   \begin{itemize}
   \item ZMQ is like a highly specialized networking toolkit.
   \item It implements the basics of socket communications while letting the user focus on the application.
-  \item Very complex messaging patterns can be built on top of these simple zmq sockets.
+  \item Very complex messaging patterns can be built on top of these simple ZMQ sockets.
   \item I highly recommend reading ``The Guide'' before writing your own apps.
   \item \url{http://zguide.zeromq.org/page:all} 
   \end{itemize}
@@ -121,12 +120,12 @@ opts_chunk$set(size = 'footnotesize')
 \end{frame}
 
 \begin{frame}[fragile]{doDeathstar foreach example}
-  \lstinputlisting[language=Renhanced]{code/doDeathstar.example.r}  
+  \lstinputlisting[language=Renhanced]{code/doDeathstar.example.r}
 \end{frame}
 
 
 \begin{frame}{Thanks for listening!}
-    Many people contributed ideas and helped debug work in progress as the package was being developed.\\
+    Many people contributed ideas and helped debug work in progress as the rzmq package was being developed.\\
     \medskip
     Bryan Lewis for collaborating and planning this talk with me.\\
     Kurt Hornik for putting up with my packaging.\\
