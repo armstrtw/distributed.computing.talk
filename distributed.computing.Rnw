@@ -22,18 +22,21 @@
   morekeywords={acf,ar,arima,arima.sim,colMeans,colSums,is.na,is.null,
     mapply,ms,na.rm,nlmin,replicate,row.names,rowMeans,rowSums,seasonal,
     sys.time,system.time,ts.plot,which.max,which.min},
-  deletekeywords={Call},
+  deletekeywords={Call,socket},
   alsoletter={.\%},
   alsoother={:_\$}}
 \lstset{language=Renhanced,
   extendedchars=false,
-  basicstyle=\small\ttfamily,
+  %basicstyle=\small\ttfamily,
+  basicstyle=\ttfamily\scriptsize,
   commentstyle=\textsl,
   showstringspaces=false,
   %stringstyle=\color{red},
+  %keywordstyle=\color{blue},
   numbers=left,
   numberstyle=\tiny\color{gray},
   numbersep=3pt,
+  breaklines=true,
   index=[1][keywords]}
 
 
@@ -75,25 +78,59 @@ opts_chunk$set(size = 'footnotesize')
   \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]{What does ZMQ give us}
+  \begin{itemize}
+  \item ZMQ is like a highly specialized networking toolkit.
+  \item It implements the basics of socket communications while letting the user focus on the application.
+  \item Very complex messaging patterns can be built on top of these simple zmq sockets.
+  \item I highly recommend reading \href{http://zguide.zeromq.org/page:all}{The Guide} before writing your own apps.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Request / Reply example}
+  \begin{itemize}
+  \item Req / Rep is the most basic message pattern.
+  \item Both the request socket and reply socket are synchronous.
+  \item The reply socket can only service one request at a time, however, many clients may connect to it and queue requests.
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]{Request / Reply, Server}
   \lstinputlisting[language=Renhanced]{code/hello.server.R}
 \end{frame}
 
-\begin{frame}[fragile]{Request / Reply, Server2}
-  \verbatiminput{code/hello.server.R}
+\begin{frame}[fragile]{Request / Reply, Client}
+  \lstinputlisting[language=Renhanced]{code/hello.client.R}
+\end{frame}
+
+\begin{frame}[fragile]{Pub / Sub example}
+  \begin{itemize}
+  \item Pub / Sub is a more interesting pattern.
+  \item Both the request socket and reply socket are synchronous.
+  \item The reply socket can only service one request at a time, however, many clients may connect to it and queue requests.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Pub / Sub, Server}
+  \lstinputlisting[language=Renhanced]{code/swap.publisher.R}
+\end{frame}
+
+\begin{frame}[fragile]{Pub / Sub, USD Client}
+  \lstinputlisting[language=Renhanced]{code/swap.subscriber.usd.R}
+\end{frame}
+
+\begin{frame}[fragile]{Pub / Sub, EUR Client}
+  \lstinputlisting[language=Renhanced]{code/swap.subscriber.eur.R}
 \end{frame}
 
 
-
-
-\begin{frame}{Thanks!}
+\begin{frame}{Thanks for listening!}
     Many people contributed ideas and helped debug work in progress as the package was being developed.\\
     \medskip
+    Bryan Lewis for collaborating and planning this talk.\\
     Kurt Hornik for putting up with my packaging.\\
-    John Laing for initial debugging.\\
-    Gyan Sinha for ideas and initial testing.\\
+    John Laing for finding bugs in my code.\\
     Prof Brian Ripley for just being himself.\\
-    My wife for enduring many solitary hours while I built these packages.\\
 \end{frame}
 
 \end{document}

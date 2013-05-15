@@ -62,12 +62,11 @@ $(FIGUREDIR):
 	pdflatex $<
 
 clean:
-	-latexmk -c -quiet $(MAINFILE).tex
-	-rm -f $(MAINTEX) $(RNWTEX)
-	-rm -rf $(FIGUREDIR)
-	-rm $(MAINPDF)
+	rm -f $(MAINTEX) $(RNWTEX)
+	rm -rf $(FIGUREDIR)
+	rm $(MAINPDF)
 
 clearcache:
-	-rm -rf cache
+	rm -rf cache
 
 cleanall: clean clearcache
