@@ -211,7 +211,7 @@ readProtoFiles(files=c("code/proto.example/order.proto","code/proto.example/fill
 
 aapl.order <- new(tutorial.Order,
                   symbol = "AAPL",
-                  price = 600.9,
+                  price = 420.5,
                   size = 100L
                   )
 
@@ -221,9 +221,25 @@ aapl.bytes <- serialize(aapl.order, NULL)
 send.socket(broker, aapl.bytes, serialize=FALSE)
 
 ## pull back fill information
-appl.fill.bytes <- receive.socket(broker,unserialize=FALSE)
-appl.fill <- tutorial.Fill$read(appl.fill.bytes)
-writeLines(as.character(appl.fill))
+aapl.fill.bytes <- receive.socket(broker,unserialize=FALSE)
+aapl.fill <- tutorial.Fill$read(aapl.fill.bytes)
+writeLines(as.character(aapl.fill))
+
+esgr.order <- new(tutorial.Order,
+                  symbol = "ESGR",
+                  price = 130.9,
+                  size = 1000L
+                  )
+
+esgr.bytes <- serialize(esgr.order, NULL)
+
+## send order
+send.socket(broker, esgr.bytes, serialize=FALSE)
+## pull back fill information
+esgr.fill.bytes <- receive.socket(broker,unserialize=FALSE)
+esgr.fill <- tutorial.Fill$read(esgr.fill.bytes)
+writeLines(as.character(esgr.fill))
+
 @ 
 
 \end{frame}
