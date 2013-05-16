@@ -214,12 +214,10 @@ aapl.order <- new(tutorial.Order,
                   price = 420.5,
                   size = 100L
                   )
-
 aapl.bytes <- serialize(aapl.order, NULL)
 
 ## send order
 send.socket(broker, aapl.bytes, serialize=FALSE)
-
 ## pull back fill information
 aapl.fill.bytes <- receive.socket(broker,unserialize=FALSE)
 aapl.fill <- tutorial.Fill$read(aapl.fill.bytes)
@@ -230,7 +228,6 @@ esgr.order <- new(tutorial.Order,
                   price = 130.9,
                   size = 1000L
                   )
-
 esgr.bytes <- serialize(esgr.order, NULL)
 
 ## send order

@@ -28,7 +28,7 @@ int main () {
 
     // send fill to client
     tutorial::Fill f;
-    f.set_timestamp(to_simple_string(second_clock::universal_time()));
+    f.set_timestamp(to_simple_string(microsec_clock::universal_time()));
     f.set_symbol(symbol); f.set_price(price); f.set_size(size);
 
     zmq::message_t reply (f.ByteSize());
