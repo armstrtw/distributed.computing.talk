@@ -221,9 +221,9 @@ aapl.bytes <- serialize(aapl.order, NULL)
 send.socket(broker, aapl.bytes, serialize=FALSE)
 
 ## pull back fill information
-fill.bytes <- receive.socket(broker,unserialize=FALSE)
-fill <- tutorial.Fill$read(fill.bytes)
-fill$toString()
+appl.fill.bytes <- receive.socket(broker,unserialize=FALSE)
+appl.fill <- tutorial.Fill$read(appl.fill.bytes)
+writeLines(as.character(appl.fill))
 @ 
 
 \end{frame}
