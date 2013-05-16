@@ -1,1 +1,2 @@
-g++ -I. order.pb.cc fill.pb.cc broker.cpp -lzmq -lpthread -o broker -lprotobuf
+protoc --proto_path=. --cpp_out=. order.proto fill.proto
+g++ -I. order.pb.cc fill.pb.cc broker.cpp -lzmq -lpthread -o broker -lprotobuf -lboost_date_time

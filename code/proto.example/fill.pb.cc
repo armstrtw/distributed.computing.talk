@@ -79,7 +79,7 @@ void protobuf_AddDesc_fill_2eproto() {
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\nfill.proto\022\010tutorial\"F\n\004Fill\022\021\n\ttimest"
-    "amp\030\001 \002(\001\022\016\n\006symbol\030\002 \002(\t\022\r\n\005price\030\003 \002(\001"
+    "amp\030\001 \002(\t\022\016\n\006symbol\030\002 \002(\t\022\r\n\005price\030\003 \002(\001"
     "\022\014\n\004size\030\004 \002(\005", 94);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "fill.proto", &protobuf_RegisterTypes);
@@ -121,7 +121,7 @@ Fill::Fill(const Fill& from)
 
 void Fill::SharedCtor() {
   _cached_size_ = 0;
-  timestamp_ = 0;
+  timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   symbol_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   price_ = 0;
   size_ = 0;
@@ -133,6 +133,9 @@ Fill::~Fill() {
 }
 
 void Fill::SharedDtor() {
+  if (timestamp_ != &::google::protobuf::internal::kEmptyString) {
+    delete timestamp_;
+  }
   if (symbol_ != &::google::protobuf::internal::kEmptyString) {
     delete symbol_;
   }
@@ -162,7 +165,11 @@ Fill* Fill::New() const {
 
 void Fill::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    timestamp_ = 0;
+    if (has_timestamp()) {
+      if (timestamp_ != &::google::protobuf::internal::kEmptyString) {
+        timestamp_->clear();
+      }
+    }
     if (has_symbol()) {
       if (symbol_ != &::google::protobuf::internal::kEmptyString) {
         symbol_->clear();
@@ -181,14 +188,15 @@ bool Fill::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required double timestamp = 1;
+      // required string timestamp = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED64) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
-                 input, &timestamp_)));
-          set_has_timestamp();
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_timestamp()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->timestamp().data(), this->timestamp().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
         }
@@ -263,9 +271,13 @@ bool Fill::MergePartialFromCodedStream(
 
 void Fill::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required double timestamp = 1;
+  // required string timestamp = 1;
   if (has_timestamp()) {
-    ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->timestamp(), output);
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->timestamp().data(), this->timestamp().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->timestamp(), output);
   }
   
   // required string symbol = 2;
@@ -295,9 +307,14 @@ void Fill::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* Fill::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required double timestamp = 1;
+  // required string timestamp = 1;
   if (has_timestamp()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->timestamp(), target);
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->timestamp().data(), this->timestamp().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->timestamp(), target);
   }
   
   // required string symbol = 2;
@@ -331,9 +348,11 @@ int Fill::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required double timestamp = 1;
+    // required string timestamp = 1;
     if (has_timestamp()) {
-      total_size += 1 + 8;
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->timestamp());
     }
     
     // required string symbol = 2;

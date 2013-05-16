@@ -90,12 +90,16 @@ class Fill : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required double timestamp = 1;
+  // required string timestamp = 1;
   inline bool has_timestamp() const;
   inline void clear_timestamp();
   static const int kTimestampFieldNumber = 1;
-  inline double timestamp() const;
-  inline void set_timestamp(double value);
+  inline const ::std::string& timestamp() const;
+  inline void set_timestamp(const ::std::string& value);
+  inline void set_timestamp(const char* value);
+  inline void set_timestamp(const char* value, size_t size);
+  inline ::std::string* mutable_timestamp();
+  inline ::std::string* release_timestamp();
   
   // required string symbol = 2;
   inline bool has_symbol() const;
@@ -135,7 +139,7 @@ class Fill : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  double timestamp_;
+  ::std::string* timestamp_;
   ::std::string* symbol_;
   double price_;
   ::google::protobuf::int32 size_;
@@ -157,7 +161,7 @@ class Fill : public ::google::protobuf::Message {
 
 // Fill
 
-// required double timestamp = 1;
+// required string timestamp = 1;
 inline bool Fill::has_timestamp() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -168,15 +172,51 @@ inline void Fill::clear_has_timestamp() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void Fill::clear_timestamp() {
-  timestamp_ = 0;
+  if (timestamp_ != &::google::protobuf::internal::kEmptyString) {
+    timestamp_->clear();
+  }
   clear_has_timestamp();
 }
-inline double Fill::timestamp() const {
+inline const ::std::string& Fill::timestamp() const {
+  return *timestamp_;
+}
+inline void Fill::set_timestamp(const ::std::string& value) {
+  set_has_timestamp();
+  if (timestamp_ == &::google::protobuf::internal::kEmptyString) {
+    timestamp_ = new ::std::string;
+  }
+  timestamp_->assign(value);
+}
+inline void Fill::set_timestamp(const char* value) {
+  set_has_timestamp();
+  if (timestamp_ == &::google::protobuf::internal::kEmptyString) {
+    timestamp_ = new ::std::string;
+  }
+  timestamp_->assign(value);
+}
+inline void Fill::set_timestamp(const char* value, size_t size) {
+  set_has_timestamp();
+  if (timestamp_ == &::google::protobuf::internal::kEmptyString) {
+    timestamp_ = new ::std::string;
+  }
+  timestamp_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Fill::mutable_timestamp() {
+  set_has_timestamp();
+  if (timestamp_ == &::google::protobuf::internal::kEmptyString) {
+    timestamp_ = new ::std::string;
+  }
   return timestamp_;
 }
-inline void Fill::set_timestamp(double value) {
-  set_has_timestamp();
-  timestamp_ = value;
+inline ::std::string* Fill::release_timestamp() {
+  clear_has_timestamp();
+  if (timestamp_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = timestamp_;
+    timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
 }
 
 // required string symbol = 2;

@@ -3,9 +3,11 @@
 #include <stdexcept>
 #include <unistd.h>
 #include <zmq.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <order.pb.h>
 #include <fill.pb.h>
-
+using namespace boost::posix_time;
+using std::cout; using std::endl;
 
 int main () {
   zmq::context_t context(1);
@@ -19,16 +21,15 @@ int main () {
 
     tutorial::Order o;
     o.ParseFromArray(request.data(), request.size());
-    //std::cout << o.symbol() << "|" << o.price << "|" << o.size() << std::endl;
+
     std::string symbol(o.symbol());
-    std::cout << symbol << std::endl;
+    double price(o.price());
+    int size(o.size());
 
     // send fill to client
     tutorial::Fill f;
-    f.set_timestamp(1);
-    f.set_symbol("ZMQ");
-    f.set_price(55.59);
-    f.set_size(100);
+    f.set_timestamp(to_simple_string(second_clock::universal_time()));
+    f.set_symbol(symbol); f.set_price(price); f.set_size(size);
 
     zmq::message_t reply (f.ByteSize());
     if(!f.SerializeToArray(reply.data(),reply.size())) {
